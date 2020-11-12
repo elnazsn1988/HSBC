@@ -1,0 +1,41 @@
+Option Explicit
+
+Sub SplitDoc()
+Application.ScreenUpdating = False
+Dim Rng As Range, DocSrc As Document, DocTgt As Document
+Dim i As Long, StrTxt As String: Const StrNoChr As String = """*./\:?|"
+Set DocSrc = ActiveDocument
+With DocSrc.Range
+  With .Find
+    .ClearFormatting
+    .Replacement.ClearFormatting
+    .Format = True
+    .Forward = True
+    .Text = ""
+    .Style = "FPR Section Header"
+    .Replacement.Text = ""
+    .Wrap = wdFindStop
+    .Execute
+  End With
+  Do While .Find.Found
+    Set Rng = .Paragraphs(1).Range
+    Set Rng = Rng.GoTo(What:=wdGoToBookmark, Name:="\HeadingLevel")
+    Set DocTgt = Documents.Add(DocSrc.AttachedTemplate.FullName)
+    With DocTgt
+      .Range.FormattedText = Rng.FormattedText
+      StrTxt = Split(.Paragraphs.First.Range.Text, vbCr)(0)
+      ' Strip out illegal characters
+      For i = 1 To Len(StrNoChr)
+        StrTxt = Replace(StrTxt, Mid(StrNoChr, i, 1), "_")
+      Next
+      .Paragraphs.First.Range.Delete
+      .SaveAs2 FileName:=DocSrc.Path & "\output\" & StrTxt & ".docx", FileFormat:=wdFormatXMLDocument, AddToRecentFiles:=False
+      .Close False
+    End With
+    .Start = Rng.End
+    .Find.Execute
+  Loop
+End With
+Set Rng = Nothing: Set DocSrc = Nothing: Set DocTgt = Nothing
+Application.ScreenUpdating = True
+End Sub
