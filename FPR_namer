@@ -1,0 +1,96 @@
+Option Explicit
+Sub HJ()
+    Dim objCC As Integer 'ContentControl
+    'Dim objCL As Integer 'ContentControlListEntry
+    'Dim wrd As Integer
+    'Dim oCC As ContentControl
+    Dim lngIndex As Long
+    Dim lng_SIndex As Long
+    Dim lnkIndex As Long
+    Dim lngLE As Long, bFld As Boolean, i As Long
+    'Dim objCC As Integer 'ContentControl
+    Dim objCL As Integer 'ContentControlListEntry
+   
+    Dim S_Index As Integer
+    Dim I_Index As Integer
+    'lnkIndex = 1
+    
+    lngIndex = 0
+    lng_SIndex = 0
+
+    For objCC = 1 To ActiveDocument.ContentControls.Count
+        'If InStr(ActiveDocument.ContentControls(objCC).Range.Text, "INSERT") > 0 Then  'Or InStr(ActiveDocument.ContentControls(objCC).Range.Text, "SELECT") > 0 Then
+        'If InStr(ActiveDocument.ContentControls(objCC).PlaceholderText.Value, "SELECT") > 0 Then
+          'bFld = True: i = i + 1:
+        If ActiveDocument.ContentControls(objCC).ShowingPlaceholderText Then
+            If InStr(ActiveDocument.ContentControls(objCC).PlaceholderText.Value, "SELECT") > 0 Then
+              bFld = True: i = i + 1:
+              ActiveDocument.ContentControls(objCC).SetPlaceholderText Text:=Replace(ActiveDocument.ContentControls(objCC).PlaceholderText.Value, "SELECT", "Field_" & i, , , vbTextCompare)
+            End If
+            If InStr(ActiveDocument.ContentControls(objCC).PlaceholderText.Value, "INSERT") > 0 Then
+              bFld = True: i = i + 1:
+              ActiveDocument.ContentControls(objCC).SetPlaceholderText Text:=Replace(ActiveDocument.ContentControls(objCC).PlaceholderText.Value, "INSERT", "Field_" & i, , , vbTextCompare)
+            End If
+        End If
+        
+        With ActiveDocument.ContentControls(objCC).Range.Find
+            .ClearFormatting
+            .Text = "INSERT"
+            .Replacement.Text = "i_Field_" & objCC & "_" & lngIndex
+            .Replacement.ClearFormatting
+            .Forward = True
+            .Wrap = wdFindStop
+            .Execute Replace:=wdReplaceOne
+        End With
+        lngIndex = lngIndex + 1
+        'End If
+        
+        'If InStr(ActiveDocument.ContentControls(objCC).Range.Text, "SELECT") > 0 Then ' Or InStr(ActiveDocument.ContentControls(objCC).Range.Text, "SELECT") > 0 Then
+            
+        With ActiveDocument.ContentControls(objCC).Range.Find
+            .ClearFormatting
+            .Text = "SELECT"
+            .Replacement.Text = "s_Field_" & objCC & "_" & lng_SIndex
+            .Replacement.ClearFormatting
+            .Forward = True
+            .Wrap = wdFindStop
+            .Execute Replace:=wdReplaceOne
+        End With
+        lng_SIndex = lng_SIndex + 1
+        'End If
+            'ActiveDocument.ContentControls(objCC).Range.Text = Replace(ActiveDocument.ContentControls(objCC).Range.Text, "INSERT", "i_Field_" & objCC & "_" & lngIndex)
+            'ActiveDocument.ContentControls(objCC).Range.Text = Replace(ActiveDocument.ContentControls(objCC).Range.Text, "SELECT", "s_Field_" & objCC & "_" & lngIndex)
+        'lngIndex = lngIndex + 1
+    
+        If ActiveDocument.ContentControls(objCC).Type = wdContentControlComboBox Or _
+        ActiveDocument.ContentControls(objCC).Type = wdContentControlDropdownList Then
+        'lnkIndex = 1
+        S_Index = 0
+        I_Index = 0
+        'For Each objCL In objCC.DropdownListEntries
+            For lngLE = 1 To ActiveDocument.ContentControls(objCC).DropdownListEntries.Count
+                'ActiveDocument.ContentControls(objCC).DropdownListEntries(objCL).Select
+                If InStr(ActiveDocument.ContentControls(objCC).DropdownListEntries(lngLE).Text, "INSERT") > 0 Then 'Or InStr(ActiveDocument.ContentControls(objCC).DropdownListEntries(lngLE).Text, "SELECT") > 0 Then
+                    I_Index = I_Index + 1
+                    ActiveDocument.ContentControls(objCC).DropdownListEntries(lngLE).Text = Replace(ActiveDocument.ContentControls(objCC).DropdownListEntries(lngLE).Text, "INSERT", "ii_Field_" & objCC & lngLE & "_" & I_Index)
+                    'ActiveDocument.ContentControls(objCC).DropdownListEntries(lngLE).Text = Replace(ActiveDocument.ContentControls(objCC).DropdownListEntries(lngLE).Text, "SELECT", "ss_Field_" & objCC & lngIndex & lngLE & "_" & lnkIndex)
+                    ActiveDocument.ContentControls(objCC).DropdownListEntries(lngLE).Value = ActiveDocument.ContentControls(objCC).DropdownListEntries(lngLE).Text
+                    'lngIndex = lngIndex + 1
+                    'lnkIndex = lnkIndex + 1
+                End If
+                
+                If InStr(ActiveDocument.ContentControls(objCC).DropdownListEntries(lngLE).Text, "SELECT") > 0 Then 'Or InStr(ActiveDocument.ContentControls(objCC).DropdownListEntries(lngLE).Text, "SELECT") > 0 Then
+                    S_Index = S_Index + 1
+                    'ActiveDocument.ContentControls(objCC).DropdownListEntries(lngLE).Text = Replace(ActiveDocument.ContentControls(objCC).DropdownListEntries(lngLE).Text, "INSERT", "ii_Field_" & objCC & lngIndex & lngLE & "_" & lnkIndex)
+                    ActiveDocument.ContentControls(objCC).DropdownListEntries(lngLE).Text = Replace(ActiveDocument.ContentControls(objCC).DropdownListEntries(lngLE).Text, "SELECT", "ss_Field_" & objCC & lngLE & "_" & S_Index)
+                    ActiveDocument.ContentControls(objCC).DropdownListEntries(lngLE).Value = ActiveDocument.ContentControls(objCC).DropdownListEntries(lngLE).Text
+                    'lngIndex = lngIndex + 1
+                    'lnkIndex = lnkIndex + 1
+                End If
+                
+            Next
+        End If
+            
+        'End If
+    Next
+End Sub
