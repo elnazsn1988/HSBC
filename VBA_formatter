@@ -1,0 +1,169 @@
+Option Explicit
+Sub beautimus2()
+    Dim objCC As Integer 'ContentControl
+    Dim lngIndex As Long
+    Dim lng_SIndex As Long
+    Dim lnkIndex As Long
+    Dim lngLE As Long, bFld As Boolean, i As Long, DollarCount As Integer
+    Dim objCL As Integer 'ContentControlListEntry
+    Dim objDoc As Document
+    Dim objRange As Range
+    Dim myRange As Range
+    Dim strHighlightColor As String
+    Dim andy As Integer
+   
+    Dim S_Index As Integer
+    Dim I_Index As Integer
+    Dim j As Long, ij As Long, jj As Long
+
+    Dim Rng As Range
+
+    j = 1
+    lngIndex = 0
+    lng_SIndex = 0
+    
+    Application.ScreenUpdating = False
+
+    For objCC = 1 To ActiveDocument.ContentControls.Count
+        'If InStr(ActiveDocument.ContentControls(objCC).Range.Text, "INSERT") > 0 Then  'Or InStr(ActiveDocument.ContentControls(objCC).Range.Text, "SELECT") > 0 Then
+        'If InStr(ActiveDocument.ContentControls(objCC).PlaceholderText.Value, "SELECT") > 0 Then
+          'bFld = True: i = i + 1:
+        If ActiveDocument.ContentControls(objCC).ShowingPlaceholderText Then
+            If InStr(ActiveDocument.ContentControls(objCC).PlaceholderText.Value, "SELECT") > 0 Then
+              bFld = True: i = i + 1:
+              ActiveDocument.ContentControls(objCC).SetPlaceholderText Text:=Replace(ActiveDocument.ContentControls(objCC).PlaceholderText.Value, "SELECT", "Field_" & i, , , vbTextCompare)
+            'End If
+            ElseIf InStr(ActiveDocument.ContentControls(objCC).PlaceholderText.Value, "INSERT") > 0 Then
+              bFld = True: i = i + 1:
+              ActiveDocument.ContentControls(objCC).SetPlaceholderText Text:=Replace(ActiveDocument.ContentControls(objCC).PlaceholderText.Value, "INSERT", "Field_" & i, , , vbTextCompare)
+            End If
+        End If
+        
+        If InStr(ActiveDocument.ContentControls(objCC).Range.Text, "INSERT") > 0 Then
+            With ActiveDocument.ContentControls(objCC).Range.Find
+                .ClearFormatting
+                .Text = "INSERT"
+                .Replacement.Text = "i_Field_" & objCC & "_" & lngIndex
+                .Replacement.ClearFormatting
+                .Forward = True
+                .Wrap = wdFindStop
+                .Execute Replace:=wdReplaceOne
+            End With
+            lngIndex = lngIndex + 1
+        ElseIf InStr(ActiveDocument.ContentControls(objCC).Range.Text, "SELECT") > 0 Then ' Or InStr(ActiveDocument.ContentControls(objCC).Range.Text, "SELECT") > 0 Then
+            With ActiveDocument.ContentControls(objCC).Range.Find
+                .ClearFormatting
+                .Text = "SELECT"
+                .Replacement.Text = "s_Field_" & objCC & "_" & lng_SIndex
+                .Replacement.ClearFormatting
+                .Forward = True
+                .Wrap = wdFindStop
+                .Execute Replace:=wdReplaceOne
+            End With
+            lng_SIndex = lng_SIndex + 1
+        End If
+            'ActiveDocument.ContentControls(objCC).Range.Text = Replace(ActiveDocument.ContentControls(objCC).Range.Text, "INSERT", "i_Field_" & objCC & "_" & lngIndex)
+            'ActiveDocument.ContentControls(objCC).Range.Text = Replace(ActiveDocument.ContentControls(objCC).Range.Text, "SELECT", "s_Field_" & objCC & "_" & lngIndex)
+        'lngIndex = lngIndex + 1
+        
+        If ActiveDocument.ContentControls(objCC).Type = wdContentControlComboBox Or ActiveDocument.ContentControls(objCC).Type = wdContentControlDropdownList Then
+        
+            For j = 1 To ActiveDocument.ContentControls(objCC).DropdownListEntries.Count
+              If InStr(1, ActiveDocument.ContentControls(objCC).DropdownListEntries(j).Text, "INSERT", vbTextCompare) > 0 Then
+                'If bFld = False Then
+                bFld = True: i = i + 1
+                'End If
+                ij = 1
+
+                Do While ij < 3000
+                    If InStr(1, ActiveDocument.ContentControls(objCC).DropdownListEntries(j).Text, "INSERT", vbTextCompare) > 0 Then
+                    ActiveDocument.ContentControls(objCC).DropdownListEntries(j).Text = Replace(ActiveDocument.ContentControls(objCC).DropdownListEntries(j).Text, "INSERT", "iii_Field_" & i & "_" & ij, 1, ij, vbTextCompare)
+                    End If
+                    ij = ij + 1
+                Loop
+                
+                If bFld = False Then
+                bFld = True: i = i + 1
+                End If
+                'ActiveDocument.ContentControls(objCC).DropdownListEntries(j).Text = Replace(ActiveDocument.ContentControls(objCC).DropdownListEntries(j).Text, "INSERT", "iii_Field_" & i, 1, ij & "_" & ij, vbTextCompare)
+              'ElseIf InStr(1, ActiveDocument.ContentControls(objCC).DropdownListEntries(j).Text, "SELECT", vbTextCompare) > 0 Then
+                'If bFld = False Then
+                'bFld = True: i = i + 1
+                'End If
+                'ActiveDocument.ContentControls(objCC).DropdownListEntries(j).Text = Replace(ActiveDocument.ContentControls(objCC).DropdownListEntries(j).Text, "SELECT", "ii_Field_" & i, 1, i, vbTextCompare)
+              End If
+              'Wend
+              Next
+        End If
+        
+    
+        'If ActiveDocument.ContentControls(objCC).Type = wdContentControlComboBox Or
+        'ActiveDocument.ContentControls(objCC).Type = wdContentControlDropdownList Then
+
+            'I_Index = 0
+            'andy = 1
+
+                'For lngLE = 1 To ActiveDocument.ContentControls(objCC).DropdownListEntries.Count
+                    'ActiveDocument.ContentControls(objCC).DropdownListEntries(objCL).Select
+                    'DollarCount = (Len(ActiveDocument.ContentControls(objCC).DropdownListEntries(lngLE)) - Len(Replace(ActiveDocument.ContentControls(objCC).DropdownListEntries(lngLE), "INSERT", ""))) / Len("INSERT")
+                    'If InStr(ActiveDocument.ContentControls(objCC).DropdownListEntries(lngLE).Text, "INSERT") > 0 Then 'Or InStr(ActiveDocument.ContentControls(objCC).DropdownListEntries(lngLE).Text, "SELECT") > 0 Then
+                        'I_Index = I_Index + 1
+                        
+                        
+                    'End If
+                'Next
+                
+                
+                
+                'For andy = 1 To DollarCount
+                    'ActiveDocument.ContentControls(objCC).DropdownListEntries(lngLE).Text = Replace(ActiveDocument.ContentControls(objCC).DropdownListEntries(lngLE).Text, "INSERT", "ii_Field_" & objCC & lngLE & "_" & I_Index & "_" & andy)
+                    'ActiveDocument.ContentControls(objCC).DropdownListEntries(lngLE).Value = ActiveDocument.ContentControls(objCC).DropdownListEntries(lngLE).Text
+                'Next
+
+                'ElseIf InStr(ActiveDocument.ContentControls(objCC).DropdownListEntries(lngLE).Text, "SELECT") > 0 Then 'Or InStr(ActiveDocument.ContentControls(objCC).DropdownListEntries(lngLE).Text, "SELECT") > 0 Then
+                    'S_Index = S_Index + 1
+           
+                    'ActiveDocument.ContentControls(objCC).DropdownListEntries(lngLE).Text = Replace(ActiveDocument.ContentControls(objCC).DropdownListEntries(lngLE).Text, "SELECT", "ss_Field_" & objCC & lngLE & "_" & S_Index)
+                'End If
+                
+            'Next
+        'End If
+            
+        'End If
+    Next
+    
+    Set objDoc = ActiveDocument
+    strHighlightColor = wdYellow
+        With Selection
+        .HomeKey Unit:=wdStory
+           With Selection.Find
+             .Highlight = True
+        
+             Do While .Execute
+               If Selection.Range.HighlightColorIndex = strHighlightColor Then
+                 Set objRange = Selection.Range
+                 objRange.HighlightColorIndex = wdNoHighlight
+                 Selection.Collapse wdCollapseEnd
+               End If
+             Loop
+        End With
+            End With
+ 
+  'MsgBox ("The chosen highlight color has been removed in the document.")
+ 
+  Application.ScreenUpdating = True
+  Set objDoc = Nothing
+
+
+  Set Rng = ActiveDocument.Range
+
+    With Rng.Find
+
+        .ClearFormatting
+        .Highlight = True
+
+        While .Execute(Forward:=True, Format:=True)
+        jj = jj + 1
+            'Note: 'rng' is now the range containing the matched content
+            Rng.Text = "INSERT_" & jj
+        Wend
